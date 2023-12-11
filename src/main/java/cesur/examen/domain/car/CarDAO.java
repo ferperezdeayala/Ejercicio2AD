@@ -14,16 +14,23 @@ import java.util.List;
  * EXAMEN DE ACCESO A DATOS
  * Diciembre 2023
  *
- * Nombre del alumno:
- * Fecha:
+ * Nombre del alumno: Fernando Perez de Ayala
+ * Fecha: 11/12/2023
  */
 
 @Log
 public class CarDAO implements DAO<Car> {
     @Override
-    public Car save(Car car) {
-
-        /* Implement method here */
+    public Car save(Car data) {
+        Car car = null;
+        try ( org.hibernate.Session s = HibernateUtil.getSessionFactory( ).openSession( ) ) {
+            Transaction t = s.beginTransaction( );
+            s.persist( data );
+            t.commit( );
+            car = data;
+        } catch ( Exception e ) {
+            log.severe( "Error al guardar. " + data.toString( ) );
+        }
 
         return car;
     }
@@ -52,7 +59,12 @@ public class CarDAO implements DAO<Car> {
         var out = new ArrayList<Car>();
 
 
-        /* Implement method here */
+        try ( Session s = HibernateUtil.getSessionFactory( ).openSession( ) ) {
+            Query<Car> q = s.createQuery( "from Car where manufacturer =: m " , Car.class );
+            q.setParameter( "m" , manufacturer );
+            out = ( ArrayList<Car> ) q.getResultList( );
+        }
+
 
         return out;
     }

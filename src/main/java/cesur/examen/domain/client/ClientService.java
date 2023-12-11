@@ -6,13 +6,14 @@ import cesur.examen.domain.car.CarDAO;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * EXAMEN DE ACCESO A DATOS
  * Diciembre 2023
  *
- * Nombre del alumno:
- * Fecha:
+ * Nombre del alumno: Fernando Perez de Ayala
+ * Fecha: 11/12/2023
  */
 
 public class ClientService {
@@ -26,9 +27,20 @@ public class ClientService {
      * @return the list of clients
      */
     public static List<Client> hasManufacturer(String manufacturer){
-        var out= new ArrayList<Client>(0);
+        List<Client>  out= new ArrayList<Client>(0);
+        var setOut = new HashSet<Client>( 0 );
+        var todosClientes = new ArrayList<Client>( 0 );
+        ClientDAO clientDAO = new ClientDAO();
+        todosClientes = ( ArrayList<Client> ) clientDAO.getAll();
 
-        /* Implement method here */
+        for (Client cliente: todosClientes){
+            for(Car coche: cliente.getCars()){
+                if(Objects.equals( coche.getManufacturer( ) , manufacturer )){
+                    setOut.add( cliente );
+                }
+            }
+        }
+        out = setOut.stream( ).toList();
 
         return out;
     }
